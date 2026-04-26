@@ -151,6 +151,28 @@ def paper_set_summary(args):
     _emit({"id": args.id, "summary_path": str(path.relative_to(data_repo_path()))})
 
 
+def paper_set_raw(args):
+    """Persist raw fetched content to papers/raw/<id>.<ext>.
+
+    Body comes from --file (a path on disk) or stdin (binary-safe). Used by
+    the paper-summarizer agent to keep an offline copy for grounding /read
+    follow-up questions.
+    """
+    if args.file:
+        body = Path(args.file).read_bytes()
+    else:
+        body = sys.stdin.buffer.read()
+    repo = ensure_data_repo(create_dirs=True)
+    out_path = repo / "papers" / "raw" / f"{args.id}.{args.ext}"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_bytes(body)
+    _emit({
+        "id": args.id,
+        "raw_path": str(out_path.relative_to(data_repo_path())),
+        "bytes": len(body),
+    })
+
+
 # ---------- tracking path helpers ----------
 
 def _groups_path() -> Path:
@@ -344,6 +366,14 @@ def main():
     ps = sub.add_parser("paper-set-summary")
     ps.add_argument("id")
     ps.set_defaults(func=paper_set_summary)
+
+    psr = sub.add_parser("paper-set-raw")
+    psr.add_argument("id")
+    psr.add_argument("--ext", required=True,
+                     choices=["html", "txt", "pdf", "md"],
+                     help="Extension for the raw file written under papers/raw/.")
+    psr.add_argument("--file", help="Path to read body from. Otherwise stdin (binary).")
+    psr.set_defaults(func=paper_set_raw)
 
     ga = sub.add_parser("group-add")
     ga.add_argument("--id"); ga.add_argument("--display-name", required=True)

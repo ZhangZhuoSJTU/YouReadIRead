@@ -65,6 +65,22 @@ class PaperSubcommandsTests(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertEqual(json.loads(r.stdout)["status"], "read")
 
+    def test_paper_set_raw_via_stdin(self):
+        run(["paper-add", "--url", "https://arxiv.org/abs/2401.99999",
+             "--title", "Raw test", "--via", "url"], self.env)
+
+        body = b"raw body bytes \xff\x00 with binary"
+        env = {**os.environ, **self.env}
+        r = subprocess.run(
+            ["python3", str(SCRIPT), "paper-set-raw", "arxiv-2401.99999", "--ext", "txt"],
+            input=body, capture_output=True, env=env,
+        )
+        self.assertEqual(r.returncode, 0, r.stderr)
+
+        raw_path = Path(self.tmp.name) / "data" / "papers" / "raw" / "arxiv-2401.99999.txt"
+        self.assertTrue(raw_path.exists(), f"raw file missing at {raw_path}")
+        self.assertEqual(raw_path.read_bytes(), body)
+
 
 if __name__ == "__main__":
     unittest.main()

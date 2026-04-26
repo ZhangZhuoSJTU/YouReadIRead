@@ -34,7 +34,10 @@ Pick the highest tier available; tell the user which ran.
 
 ### `/add <url>`
 
-1. Deep-summarize via **paper-summarizer** subagent.
+1. Deep-summarize via **paper-summarizer** subagent. The subagent persists
+   raw fetched content via `manage_data.py paper-set-raw <id> --ext ...`
+   (txt for grounding, plus pdf when arXiv). Skipped if
+   `summary.store_raw_content` is false.
 2. `manage_data.py paper-add --url ... --title ... --authors ...`
 3. `echo "$summary" | manage_data.py paper-set-summary <id>`
 4. Confirm (id, title, one-liner, tags). Log `signal-log --event add_via_url`.

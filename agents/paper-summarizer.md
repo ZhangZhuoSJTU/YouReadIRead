@@ -1,6 +1,6 @@
 ---
 name: paper-summarizer
-description: Specialized agent for fetching a single paper / blog / PDF URL and returning a structured 7-section markdown summary (motivation, problem statement, challenge, insight, tech details, evaluation, takeaways). Use for parallel summarization fanout from paper-curate during /add and from /update [r]ead-now paths. Read-only relative to the data repo — does not write any state.
+description: Specialized agent for fetching a single paper / blog / PDF URL and returning a structured 7-section markdown summary (motivation, problem statement, challenge, insight, tech details, evaluation, takeaways). Use for parallel summarization fanout from paper-curate during /add and from /update [r]ead-now paths. Persists raw fetched content under papers/raw/ when summary.store_raw_content is true.
 tools: Read, Bash, WebFetch
 model: sonnet
 ---
@@ -25,16 +25,29 @@ canonical 7-section markdown, ready to feed into
    - **Generic HTML**: WebFetch with prompt "extract the main body text and
      headings; ignore navigation, footers, and ads".
 
-2. **Extract metadata.** Pull `title`, `authors` (list), `venue` (if visible),
+2. **Persist raw content** (when `summary.store_raw_content` is true in
+   `~/.you-read-i-read/config.yaml`, which is the default). Used by
+   `paper-read` to ground follow-up questions:
+   - For arXiv: pipe the extracted text to
+     `python3 scripts/manage_data.py paper-set-raw <id> --ext txt` and
+     also save the PDF via `paper-set-raw <id> --ext pdf --file /tmp/<id>.pdf`
+     when it was downloaded. If only the abstract is available, save it as
+     `--ext txt` and skip the pdf step.
+   - For PDF URLs: save both the extracted text (`--ext txt`) and the
+     downloaded binary (`--ext pdf --file ...`).
+   - For HTML: pipe the cleaned body text to `paper-set-raw <id> --ext txt`.
+   - Skip persistence if `store_raw_content` is false.
+
+3. **Extract metadata.** Pull `title`, `authors` (list), `venue` (if visible),
    `year` from the page. Use what you can confirm; leave missing fields blank.
 
-3. **Write the 7 sections** (verbatim template below). Word budgets per
-   section come from `summary.max_words_per_section` in the user's config —
-   you can read `~/.you-read-i-read/config.yaml` if present, else fall back
-   to: motivation 120, problem_statement 120, challenge 120, insight 80,
+4. **Write the 7 sections** (verbatim template below). Word budgets per
+   section come from `summary.max_words_per_section` in the user's config.
+   Read `~/.you-read-i-read/config.yaml` if present; else fall back to:
+   motivation 120, problem_statement 120, challenge 120, insight 80,
    tech_details 250, evaluation 150, takeaways 120.
 
-4. **Write a 1-sentence `one_liner`** (≤ 180 chars) that captures **novelty**,
+5. **Write a 1-sentence `one_liner`** (≤ 180 chars) that captures **novelty**,
    not topic. Bad: "A benchmark for X." Good: "Adds a retrieval-then-act
    loop to a 7B base, gaining +14% on AgentBench at no extra inference cost."
 
