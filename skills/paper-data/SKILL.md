@@ -86,8 +86,11 @@ pass `--field reason="..."` so the preference model learns *why*.
 1. `git -C ~/.you-read-i-read/data status --short`. If clean, tell user; stop.
 2. `git -C ... diff --stat`. Show.
 3. **Confirm:** "Commit and push? (yes / message / no)".
-4. **Stage + commit** with a message naming what changed
-   (`update: <N> new papers, <M> summaries, <K> tracking changes`).
+4. **Stage + commit** with a descriptive message naming what changed
+   (`update: <N> new papers, <M> summaries, <K> tracking changes`). Append a
+   `Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>`
+   trailer — the data repo's contents (summaries, index, signals) are
+   largely Claude-authored.
 5. **Push** only with confirmation OR `data_repo.auto_push: true`.
 
 `/sync status` shows adapter health + Apify spend (read

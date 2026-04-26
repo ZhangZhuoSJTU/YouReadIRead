@@ -9,10 +9,12 @@
 # --- development artifacts (kept on disk for the agent, not in git) ---
 docs/superpowers/
 
-# --- claude code runtime artifacts ---
-.claude/.todos/
-.claude/sessions/
-.claude/logs/
+# --- claude code runtime artifacts (project-level) ---
+# Plugin code lives in .claude-plugin/ (committed) and at top-level dirs
+# (skills/, agents/, commands/). The .claude/ directory only holds user-side
+# Claude Code state (sessions, todos, logs, local settings) and should never
+# enter the repo.
+.claude/
 
 # --- python caches ---
 __pycache__/
