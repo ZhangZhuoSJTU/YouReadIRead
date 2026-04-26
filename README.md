@@ -27,6 +27,8 @@ taste, and runs interactive reading sessions.
 /reload-plugins
 ```
 
+The repo is a **self-marketplace** (`.claude-plugin/marketplace.json` points at the repo root), so the two-step install above works directly from GitHub.
+
 For local development:
 
 ```
