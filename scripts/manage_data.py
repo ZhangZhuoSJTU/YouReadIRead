@@ -228,6 +228,86 @@ def state_set_last_checked(args):
     _emit(state[args.kind][args.id])
 
 
+# ---------- signals + preference state ----------
+
+POSITIVE_EVENTS = {"update_accepted", "read_finished"}
+NEGATIVE_EVENTS = {"update_rejected", "archived_without_reading"}
+
+
+def _signals_path() -> Path:
+    return ensure_data_repo(create_dirs=True) / "preferences" / "signals.jsonl"
+
+
+def _preference_state_path() -> Path:
+    return ensure_data_repo(create_dirs=True) / "preferences" / "preference-state.yaml"
+
+
+def _recommend_mode(totals: dict) -> str:
+    n = totals.get("signals", 0)
+    if n >= 100:
+        return "full-auto"
+    if n >= 25:
+        return "semi-auto"
+    return "interactive"
+
+
+def _recompute_preference_state():
+    """Walk signals.jsonl, recompute totals/tags/recents. Idempotent."""
+    state = {
+        "totals": {"signals": 0, "accepted": 0, "rejected": 0,
+                   "read_finished": 0, "archived_without_reading": 0},
+        "tags": {},
+        "recent_positives": [], "recent_negatives": [],
+        "recommended_mode": "interactive",
+        "last_recomputed": now_iso(),
+    }
+    sig_path = _signals_path()
+    if not sig_path.exists():
+        write_yaml(_preference_state_path(), state); return
+
+    pos_ring, neg_ring = [], []
+    with sig_path.open() as f:
+        for line in f:
+            try:
+                rec = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            evt, pid = rec.get("event"), rec.get("paper_id")
+            state["totals"]["signals"] += 1
+            if evt == "update_accepted":
+                state["totals"]["accepted"] += 1; pos_ring.append(pid)
+            elif evt == "update_rejected":
+                state["totals"]["rejected"] += 1; neg_ring.append(pid)
+            elif evt == "read_finished":
+                state["totals"]["read_finished"] += 1; pos_ring.append(pid)
+            elif evt == "archived_without_reading":
+                state["totals"]["archived_without_reading"] += 1; neg_ring.append(pid)
+
+            tag = rec.get("tag")
+            if tag:
+                bucket = state["tags"].setdefault(
+                    tag, {"accepted": 0, "rejected": 0, "read_finished": 0})
+                if evt == "update_accepted": bucket["accepted"] += 1
+                elif evt == "update_rejected": bucket["rejected"] += 1
+                elif evt == "read_finished": bucket["read_finished"] += 1
+
+    # Cap rings at 8 most recent.
+    state["recent_positives"] = [p for p in pos_ring[-8:] if p]
+    state["recent_negatives"] = [p for p in neg_ring[-8:] if p]
+    state["recommended_mode"] = _recommend_mode(state["totals"])
+    write_yaml(_preference_state_path(), state)
+
+
+def signal_log(args):
+    record = {"ts": now_iso(), "event": args.event}
+    if args.paper_id:
+        record["paper_id"] = args.paper_id
+    record.update(_kv_list(args.field))
+    append_jsonl(_signals_path(), record)
+    _recompute_preference_state()
+    _emit(record)
+
+
 # ---------- argparse ----------
 
 def main():
@@ -295,6 +375,12 @@ def main():
     ss.add_argument("--kind", required=True, choices=["groups", "topics"])
     ss.add_argument("--id", required=True)
     ss.set_defaults(func=state_set_last_checked)
+
+    sl = sub.add_parser("signal-log")
+    sl.add_argument("--event", required=True)
+    sl.add_argument("--paper-id")
+    sl.add_argument("--field", action="append", default=[])
+    sl.set_defaults(func=signal_log)
 
     args = p.parse_args()
     args.func(args)
