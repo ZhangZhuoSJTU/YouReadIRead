@@ -1,8 +1,29 @@
+<table align="center" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td valign="middle" width="200" align="center">
+      <img src="assets/icon.svg" alt="" width="160">
+    </td>
+    <td valign="middle" width="540">
+      <h1>You Read, I Read</h1>
+      <p>A persistent reading agent for <a href="https://claude.com/claude-code">Claude Code</a>.<br>
+      You talk; it captures, tracks, learns your taste, and reads with you.</p>
+      <pre><code>/plugin marketplace add ZhangZhuoSJTU/YouReadIRead
+/plugin install you-read-i-read</code></pre>
+    </td>
+  </tr>
+</table>
+
 <p align="center">
-  <img src="assets/logo.svg" alt="You Read, I Read" width="540">
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-1A2332?style=flat-square"></a>
+  &nbsp;
+  <img alt="version 0.1.0" src="https://img.shields.io/badge/version-0.1.0-5A6373?style=flat-square">
+  &nbsp;
+  <a href="https://docs.claude.com/en/docs/claude-code/plugins"><img alt="Claude Code plugin" src="https://img.shields.io/badge/Claude_Code-plugin-C97863?style=flat-square"></a>
+  &nbsp;
+  <img alt="Tracking sources: arXiv, Semantic Scholar, HN, Twitter, LinkedIn" src="https://img.shields.io/badge/tracks-arXiv_%C2%B7_S2_%C2%B7_HN_%C2%B7_X_%C2%B7_LinkedIn-4A6B9D?style=flat-square">
 </p>
 
-**You Read, I Read** is a Claude Code plugin. You talk; it captures papers, tracks groups and topics, learns your taste, and reads with you.
+<hr>
 
 ```text
 > add this https://arxiv.org/abs/2401.12345
@@ -26,8 +47,6 @@
 
 Install once, talk to it forever.
 
----
-
 ## What you can ask it
 
 | You say | It does |
@@ -45,16 +64,6 @@ Install once, talk to it forever.
 | "push my data" / `/sync` | Commits and pushes your private data repo. |
 
 The agent learns from every accept, reject, and read, so the queue gradually self-curates. You stay in control: it never auto-adds in default mode, and it never marks a paper read without your explicit yes.
-
-## Install
-
-```
-/plugin marketplace add ZhangZhuoSJTU/YouReadIRead
-/plugin install you-read-i-read
-/reload-plugins
-```
-
-The repo is a self-marketplace (`.claude-plugin/marketplace.json` at the root), so the two-step install works directly from GitHub. Local-dev variant: `marketplace add ~/Code/YouReadIRead`.
 
 ## First run
 
@@ -80,20 +89,38 @@ The plugin caps spend per source per month (default `$5`) and skips calls when t
 
 ## How it's built
 
-| Component | What it owns |
-| --- | --- |
-| `skills/paper-curate` | `/add`, `/track-group`, `/track-topic`, `/update` (ingest + sweep). |
-| `skills/paper-read` | `/read` (interactive session, end-of-session prompt before any read flip). |
-| `skills/paper-data` | `/todo`, `/list`, `/done`, `/archive`, `/sync`, first-run setup. |
-| `agents/paper-summarizer` | Parallel summarization fanout. |
-| `scripts/_common.py` | Config + paper IDs + atomic file ops. |
-| `scripts/manage_data.py` | Single writer to the data repo (12 subcommands, 17 unit tests). |
-| `scripts/apify-mcp-launch.sh` | Spawns the Apify MCP server when `APIFY_TOKEN` is set; no-op otherwise. |
+<table>
+  <tr>
+    <td><b>Skills</b></td>
+    <td>
+      <code>paper-curate</code> (ingest + sweep) ·
+      <code>paper-read</code> (interactive session, end-of-session prompt) ·
+      <code>paper-data</code> (list / edit / sync / first-run)
+    </td>
+  </tr>
+  <tr>
+    <td><b>Subagent</b></td>
+    <td><code>paper-summarizer</code> for parallel summarization fanout</td>
+  </tr>
+  <tr>
+    <td><b>Helpers</b></td>
+    <td>
+      <code>scripts/_common.py</code> (config + paper IDs + atomic file ops) ·
+      <code>scripts/manage_data.py</code> (single writer, 12 subcommands, 17 unit tests)
+    </td>
+  </tr>
+  <tr>
+    <td><b>MCP</b></td>
+    <td><code>scripts/apify-mcp-launch.sh</code> spawns the Apify MCP server when <code>APIFY_TOKEN</code> is set; no-op otherwise</td>
+  </tr>
+  <tr>
+    <td><b>State</b></td>
+    <td>Personal data lives in a separate private git repo at <code>~/.you-read-i-read/data/</code>. Plugin tree contains zero personal data.</td>
+  </tr>
+</table>
 
-Personal state lives in a separate private git repo at `~/.you-read-i-read/data/`. The plugin tree contains zero personal data.
-
-For the data layout, see `docs/data-schema.md`. For the agent's operating invariants, see `CLAUDE.md`.
+For the data layout, see [`docs/data-schema.md`](docs/data-schema.md). For the agent's operating invariants, see [`CLAUDE.md`](CLAUDE.md).
 
 ## License
 
-MIT. See `LICENSE`.
+[MIT](LICENSE).
