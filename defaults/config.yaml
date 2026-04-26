@@ -1,0 +1,50 @@
+# You Read, I Read — default user config
+#
+# This file is the template that ships with the plugin. On first run, the
+# agent copies it to ~/.you-read-i-read/config.yaml. Edit *that* copy, not
+# this one — plugin updates would otherwise overwrite your changes.
+
+data_repo:
+  path: ~/.you-read-i-read/data
+  remote: null                       # set on first run
+  auto_push: false
+
+apify_token: null                    # set later if Twitter/LinkedIn enabled
+
+tracking_sources:
+  arxiv:            { enabled: true,  lookback_days: 14 }
+  semantic_scholar: { enabled: true,  lookback_days: 30 }
+  hackernews:       { enabled: true,  min_points: 50 }
+  twitter:
+    enabled: false
+    max_per_sweep: 50
+    max_apify_usd_per_month: 5
+    nitter_instances:
+      - https://nitter.net
+      - https://nitter.poast.org
+  linkedin:
+    enabled: false
+    max_per_sweep: 50
+    max_apify_usd_per_month: 5
+
+summary:
+  max_words_per_section:
+    motivation: 120
+    problem_statement: 120
+    challenge: 120
+    insight: 80
+    tech_details: 250
+    evaluation: 150
+    takeaways: 120
+  store_raw_content: true
+
+preferences:
+  ranking_weights:
+    accept_likelihood: 0.5
+    recency: 0.2
+    trending: 0.3
+
+update:
+  mode: interactive                  # interactive | semi-auto | full-auto
+  auto_add_relevance: 0.9
+  min_relevance_for_silent_add: 0.2
