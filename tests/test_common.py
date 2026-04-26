@@ -24,9 +24,11 @@ class TestPaperIdFor(unittest.TestCase):
                          "doi-10.1145-3576915.3623123")
 
     def test_generic_url_is_deterministic(self):
+        # Determinism: same URL → same SHA1-based slug across runs.
+        # The exact hash below is precomputed once and asserted to catch
+        # accidental changes to the hashing scheme.
         url = "https://example.com/foo/bar"
-        self.assertEqual(paper_id_for(url), paper_id_for(url))
-        self.assertTrue(paper_id_for(url).startswith("url-"))
+        self.assertEqual(paper_id_for(url), "url-1132614ad856")
 
 
 class TestSlugify(unittest.TestCase):

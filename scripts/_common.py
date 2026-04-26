@@ -12,6 +12,7 @@ import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 try:
     import yaml
@@ -26,11 +27,6 @@ USER_CONFIG_PATH = USER_CONFIG_DIR / "config.yaml"
 DEFAULT_CONFIG_PATH = PLUGIN_ROOT / "defaults" / "config.yaml"
 
 
-def _read_yaml(path: Path) -> dict:
-    with path.open() as f:
-        return yaml.safe_load(f) or {}
-
-
 def load_config() -> dict:
     """Load the user's config, falling back to the plugin default if absent.
 
@@ -38,9 +34,8 @@ def load_config() -> dict:
     the default to the user path on first invocation. This function silently
     falls back so unit tests don't require ~/.you-read-i-read/.
     """
-    if USER_CONFIG_PATH.exists():
-        return _read_yaml(USER_CONFIG_PATH)
-    return _read_yaml(DEFAULT_CONFIG_PATH)
+    path = USER_CONFIG_PATH if USER_CONFIG_PATH.exists() else DEFAULT_CONFIG_PATH
+    return read_yaml(path, {})
 
 
 def data_repo_path() -> Path:
@@ -92,7 +87,7 @@ def ensure_data_repo(create_dirs: bool = False) -> Path:
     return path
 
 
-def read_json(path: Path, default):
+def read_json(path: Path, default: Any) -> Any:
     if not path.exists():
         return default
     with path.open() as f:
@@ -109,7 +104,7 @@ def write_json(path: Path, value) -> None:
     os.replace(tmp, path)
 
 
-def read_yaml(path: Path, default):
+def read_yaml(path: Path, default: Any) -> Any:
     if not path.exists():
         return default
     with path.open() as f:
