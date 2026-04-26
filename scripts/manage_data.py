@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -147,7 +148,10 @@ def paper_set_summary(args):
     body = sys.stdin.read()
     path = _summary_path(args.id)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(body)
+    # Atomic write: tmp + os.replace, mirroring write_json / write_yaml.
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(body)
+    os.replace(tmp, path)
     _emit({"id": args.id, "summary_path": str(path.relative_to(data_repo_path()))})
 
 
@@ -265,10 +269,17 @@ def _preference_state_path() -> Path:
 
 
 def _recommend_mode(totals: dict) -> str:
-    n = totals.get("signals", 0)
-    if n >= 100:
+    """Recommend a triage mode given accumulated signal counts.
+
+    Per the spec, the threshold counts confirmed *triage* signals only
+    (accept + reject), not read_finished / archived_without_reading. Otherwise
+    a user who reads a lot from an existing queue could trip semi-auto without
+    having actually triaged any candidates.
+    """
+    triage = totals.get("accepted", 0) + totals.get("rejected", 0)
+    if triage >= 100:
         return "full-auto"
-    if n >= 25:
+    if triage >= 25:
         return "semi-auto"
     return "interactive"
 
@@ -311,11 +322,16 @@ def _recompute_preference_state():
     write_yaml(_preference_state_path(), state)
 
 
+_RESERVED_SIGNAL_KEYS = {"ts", "event", "paper_id"}
+
+
 def signal_log(args):
     record = {"ts": now_iso(), "event": args.event}
     if args.paper_id:
         record["paper_id"] = args.paper_id
-    record.update(_kv_list(args.field))
+    extra = {k: v for k, v in _kv_list(args.field).items()
+             if k not in _RESERVED_SIGNAL_KEYS}
+    record.update(extra)
     append_jsonl(_signals_path(), record)
     _recompute_preference_state()
     _emit(record)

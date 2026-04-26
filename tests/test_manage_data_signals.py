@@ -60,6 +60,35 @@ class SignalsTests(unittest.TestCase):
         state = yaml.safe_load((self.data / "preferences" / "preference-state.yaml").read_text())
         self.assertEqual(state["recommended_mode"], "semi-auto")
 
+    def test_recommend_mode_counts_only_triage_signals(self):
+        # 25 read_finished events alone should NOT promote to semi-auto.
+        # Mode is gated on accept+reject only, not every signal type.
+        for i in range(25):
+            run(["signal-log", "--event", "read_finished",
+                 "--paper-id", f"arxiv-2402.{i:05d}"], self.env)
+        import yaml
+        state = yaml.safe_load((self.data / "preferences" / "preference-state.yaml").read_text())
+        self.assertEqual(state["totals"]["read_finished"], 25)
+        self.assertEqual(state["recommended_mode"], "interactive")
+
+    def test_signal_log_field_cannot_overwrite_event(self):
+        # A careless caller passes --field event=foo: must be ignored, the
+        # canonical event must be preserved.
+        r = run(["signal-log", "--event", "update_accepted",
+                 "--paper-id", "arxiv-2401.77777",
+                 "--field", "event=update_rejected",
+                 "--field", "ts=1970-01-01T00:00:00Z"], self.env)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        sig_path = self.data / "preferences" / "signals.jsonl"
+        rec = json.loads(sig_path.read_text().splitlines()[-1])
+        self.assertEqual(rec["event"], "update_accepted")
+        self.assertNotEqual(rec["ts"], "1970-01-01T00:00:00Z")
+        # totals reflect the canonical event, not the smuggled one.
+        import yaml
+        state = yaml.safe_load((self.data / "preferences" / "preference-state.yaml").read_text())
+        self.assertEqual(state["totals"]["accepted"], 1)
+        self.assertEqual(state["totals"]["rejected"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()
