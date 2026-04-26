@@ -1,0 +1,7 @@
+# You Read, I Read — Python deps
+#
+# Tiny by design. Twitter/LinkedIn discovery is delegated to the Apify MCP
+# server (see .claude-plugin/plugin.json), so no scraping libs here.
+
+pyyaml>=6
+semanticscholar>=0.10
