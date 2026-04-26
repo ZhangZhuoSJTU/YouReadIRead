@@ -33,19 +33,72 @@
 
 ## What you can ask it
 
-| You say | It does |
-| --- | --- |
-| "add this paper `<url>`" / `/add <url>` | Fetches, writes a 7-section structured summary, files it in your to-read list. |
-| "track Stanford NLP" / `/track-group <name>` | Watches a group's publications over time. |
-| "follow papers on LLM agents" / `/track-topic <topic>` | Watches a topic across arXiv + Semantic Scholar + HN (+ optional Twitter / LinkedIn). |
-| "any new papers since last week?" / `/update` | Sweeps every tracked source, ranks, and triages with you per-card. |
-| "let's read something" / `/read` | Recommends from the top of your queue, runs an interactive session. |
-| "I want to read about tool use" / `/read tool use` | Searches your queue by keyword and picks a paper. |
-| "what's on my to-read list?" / `/todo` | Shows the queue, ranked. |
-| "show me everything I read this month" / `/list --status read --since …` | Browses any subset. |
-| "I finished reading X" / `/done` | Marks read, logs the signal. |
-| "skip this one" / `/archive` | Archives without reading. |
-| "push my data" / `/sync` | Commits and pushes your private data repo. |
+<table>
+  <thead>
+    <tr>
+      <th align="left" width="32%">You say</th>
+      <th align="left" width="44%">It does</th>
+      <th align="left" width="24%">Slash</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><i>"add this paper &lt;url&gt;"</i></td>
+      <td>Fetches, writes a 7-section structured summary, files it in your to-read list.</td>
+      <td><code>/add &lt;url&gt;</code></td>
+    </tr>
+    <tr>
+      <td><i>"track Stanford NLP"</i></td>
+      <td>Watches a group's publications over time.</td>
+      <td><code>/track-group &lt;name&gt;</code></td>
+    </tr>
+    <tr>
+      <td><i>"follow papers on LLM agents"</i></td>
+      <td>Watches a topic across arXiv, Semantic Scholar, and HN (plus optional Twitter / LinkedIn).</td>
+      <td><code>/track-topic &lt;topic&gt;</code></td>
+    </tr>
+    <tr>
+      <td><i>"any new papers since last week?"</i></td>
+      <td>Sweeps every tracked source, ranks, and triages with you per-card.</td>
+      <td><code>/update</code></td>
+    </tr>
+    <tr>
+      <td><i>"let's read something"</i></td>
+      <td>Recommends from the top of your queue and starts an interactive session.</td>
+      <td><code>/read</code></td>
+    </tr>
+    <tr>
+      <td><i>"I want to read about tool use"</i></td>
+      <td>Searches your queue by keyword, lets you pick a match.</td>
+      <td><code>/read tool use</code></td>
+    </tr>
+    <tr>
+      <td><i>"what's on my to-read list?"</i></td>
+      <td>Shows the queue, ranked.</td>
+      <td><code>/todo</code></td>
+    </tr>
+    <tr>
+      <td><i>"show me everything I read this month"</i></td>
+      <td>Browses any subset of your library.</td>
+      <td><code>/list --status read --since …</code></td>
+    </tr>
+    <tr>
+      <td><i>"I finished reading X"</i></td>
+      <td>Marks read, logs the signal.</td>
+      <td><code>/done</code></td>
+    </tr>
+    <tr>
+      <td><i>"skip this one"</i></td>
+      <td>Archives without reading.</td>
+      <td><code>/archive</code></td>
+    </tr>
+    <tr>
+      <td><i>"push my data"</i></td>
+      <td>Commits and pushes your private data repo.</td>
+      <td><code>/sync</code></td>
+    </tr>
+  </tbody>
+</table>
 
 The agent learns from every accept, reject, and read, so the queue gradually self-curates. You stay in control: it never auto-adds in default mode, and it never marks a paper read without your explicit yes.
 
