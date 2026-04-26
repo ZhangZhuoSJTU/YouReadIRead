@@ -252,12 +252,15 @@ def _recommend_mode(totals: dict) -> str:
 
 
 def _recompute_preference_state():
-    """Walk signals.jsonl, recompute totals/tags/recents. Idempotent."""
+    """Walk signals.jsonl, recompute totals + recommended_mode. Idempotent.
+
+    Preference scoring is done LLM-prompt-driven by the agent (it reads the
+    tail of signals.jsonl directly), so no tag-buckets or recent-rings live
+    here — only what's needed for deterministic threshold decisions.
+    """
     state = {
         "totals": {"signals": 0, "accepted": 0, "rejected": 0,
                    "read_finished": 0, "archived_without_reading": 0},
-        "tags": {},
-        "recent_positives": [], "recent_negatives": [],
         "recommended_mode": "interactive",
         "last_recomputed": now_iso(),
     }
@@ -265,35 +268,23 @@ def _recompute_preference_state():
     if not sig_path.exists():
         write_yaml(_preference_state_path(), state); return
 
-    pos_ring, neg_ring = [], []
     with sig_path.open() as f:
         for line in f:
             try:
                 rec = json.loads(line)
             except json.JSONDecodeError:
                 continue
-            evt, pid = rec.get("event"), rec.get("paper_id")
+            evt = rec.get("event")
             state["totals"]["signals"] += 1
             if evt == "update_accepted":
-                state["totals"]["accepted"] += 1; pos_ring.append(pid)
+                state["totals"]["accepted"] += 1
             elif evt == "update_rejected":
-                state["totals"]["rejected"] += 1; neg_ring.append(pid)
+                state["totals"]["rejected"] += 1
             elif evt == "read_finished":
-                state["totals"]["read_finished"] += 1; pos_ring.append(pid)
+                state["totals"]["read_finished"] += 1
             elif evt == "archived_without_reading":
-                state["totals"]["archived_without_reading"] += 1; neg_ring.append(pid)
+                state["totals"]["archived_without_reading"] += 1
 
-            tag = rec.get("tag")
-            if tag:
-                bucket = state["tags"].setdefault(
-                    tag, {"accepted": 0, "rejected": 0, "read_finished": 0})
-                if evt == "update_accepted": bucket["accepted"] += 1
-                elif evt == "update_rejected": bucket["rejected"] += 1
-                elif evt == "read_finished": bucket["read_finished"] += 1
-
-    # Cap rings at 8 most recent.
-    state["recent_positives"] = [p for p in pos_ring[-8:] if p]
-    state["recent_negatives"] = [p for p in neg_ring[-8:] if p]
     state["recommended_mode"] = _recommend_mode(state["totals"])
     write_yaml(_preference_state_path(), state)
 

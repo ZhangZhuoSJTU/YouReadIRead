@@ -47,7 +47,10 @@ class SignalsTests(unittest.TestCase):
         state = yaml.safe_load(state_path.read_text())
         self.assertEqual(state["totals"]["signals"], 1)
         self.assertEqual(state["totals"]["accepted"], 1)
-        self.assertIn("arxiv-2401.00001", state["recent_positives"])
+        # Schema is minimal: totals + recommended_mode + last_recomputed.
+        self.assertEqual(state["recommended_mode"], "interactive")
+        self.assertNotIn("recent_positives", state)
+        self.assertNotIn("tags", state)
 
     def test_signal_log_recommends_semi_auto_after_25(self):
         for i in range(25):
