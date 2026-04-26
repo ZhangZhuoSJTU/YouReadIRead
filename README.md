@@ -25,27 +25,11 @@
 
 <hr>
 
-```text
-> add this https://arxiv.org/abs/2401.12345
-✓ Filed: "Foo: Tool-Augmented Agents via Retrieval"  [tool-use, retrieval]
+<p align="center">
+  <img src="assets/demo.svg" alt="Example conversation: you ask, the agent files, tracks, summarizes, and reads." width="720">
+</p>
 
-> track Stanford NLP
-✓ Resolved 3 author IDs on Semantic Scholar; watching.
-
-> any new papers since last week?
-✓ 12 candidates across 2 topics. Triaging...
-
-> I want to read about tool use
-✓ 3 matches. Top: arxiv-2401.12345. Open?
-
-> I finished the tool-use paper
-✓ Marked read.
-
-> push my data
-✓ Committed 4 changes; pushed.
-```
-
-Install once, talk to it forever.
+<p align="center"><i>Install once, talk to it forever.</i></p>
 
 ## What you can ask it
 

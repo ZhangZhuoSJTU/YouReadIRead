@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" aria-label="You Read, I Read conversation example">
+  <title>You Read, I Read — example conversation</title>
+  <desc>You: add this paper. Agent: filed and tagged. You: track Stanford NLP. Agent: resolved 3 author IDs. You: any new papers since last week? Agent: 12 candidates, triaging. You: I want to read about tool use. Agent: 3 matches. You: I finished the tool-use paper. Agent: marked read. You: push my data. Agent: committed and pushed.</desc>
+
+  <style>
+    /* Frame */
+    .frame { fill: #FFFFFF; stroke: #E5E2DA; stroke-width: 1; }
+    .header { fill: #FAF8F4; }
+    .header-divider { stroke: #E5E2DA; stroke-width: 1; }
+    .header-text {
+      font: 500 12px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      fill: #8A8F99;
+      letter-spacing: 0.6px;
+    }
+    .dot-r { fill: #E8A899; }
+    .dot-y { fill: #E5C88E; }
+    .dot-g { fill: #95B79A; }
+
+    /* Conversation type styles */
+    .line {
+      font: 13px ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+      opacity: 0;
+      animation-duration: 13s;
+      animation-iteration-count: infinite;
+      animation-fill-mode: both;
+      animation-timing-function: ease-out;
+    }
+    .prompt-prefix { fill: #C97863; font-weight: 700; }
+    .prompt-text   { fill: #1A2332; }
+    .resp-prefix   { fill: #4A6B9D; font-weight: 700; }
+    .resp-text     { fill: #5A6373; }
+    .quote         { fill: #1A2332; font-style: italic; }
+    .tags          { fill: #8A8F99; }
+
+    /* Sequenced reveal: one keyframe per pair, each visible from a stagger
+       offset until ~95% of the cycle, then fades out so the loop is clean. */
+    .pair-1 { animation-name: reveal-1; }
+    .pair-2 { animation-name: reveal-2; }
+    .pair-3 { animation-name: reveal-3; }
+    .pair-4 { animation-name: reveal-4; }
+    .pair-5 { animation-name: reveal-5; }
+    .pair-6 { animation-name: reveal-6; }
+
+    @keyframes reveal-1 { 0%,1%   { opacity: 0; } 4%,93%  { opacity: 1; } 97%,100% { opacity: 0; } }
+    @keyframes reveal-2 { 0%,11%  { opacity: 0; } 14%,93% { opacity: 1; } 97%,100% { opacity: 0; } }
+    @keyframes reveal-3 { 0%,21%  { opacity: 0; } 24%,93% { opacity: 1; } 97%,100% { opacity: 0; } }
+    @keyframes reveal-4 { 0%,31%  { opacity: 0; } 34%,93% { opacity: 1; } 97%,100% { opacity: 0; } }
+    @keyframes reveal-5 { 0%,41%  { opacity: 0; } 44%,93% { opacity: 1; } 97%,100% { opacity: 0; } }
+    @keyframes reveal-6 { 0%,51%  { opacity: 0; } 54%,93% { opacity: 1; } 97%,100% { opacity: 0; } }
+
+    /* Blinking cursor at the end, only after the last pair appears */
+    .cursor {
+      fill: #1A2332;
+      font: 700 13px ui-monospace, "JetBrains Mono", "SF Mono", Menlo, monospace;
+      animation: cursor 13s infinite;
+    }
+    @keyframes cursor {
+      0%,53%  { opacity: 0; }
+      56%,60% { opacity: 1; }
+      62%,66% { opacity: 0; }
+      68%,72% { opacity: 1; }
+      74%,78% { opacity: 0; }
+      80%,84% { opacity: 1; }
+      86%,93% { opacity: 0; }
+      97%,100%{ opacity: 0; }
+    }
+  </style>
+
+  <!-- Window frame -->
+  <rect class="frame" x="0.5" y="0.5" width="719" height="379" rx="10"/>
+
+  <!-- Header bar -->
+  <path class="header" d="M 1 11 Q 1 1 11 1 L 709 1 Q 719 1 719 11 L 719 33 L 1 33 Z"/>
+  <line class="header-divider" x1="1" y1="33" x2="719" y2="33"/>
+
+  <!-- Traffic-light dots -->
+  <circle class="dot-r" cx="20" cy="17" r="5"/>
+  <circle class="dot-y" cx="36" cy="17" r="5"/>
+  <circle class="dot-g" cx="52" cy="17" r="5"/>
+
+  <!-- Header label -->
+  <text class="header-text" x="360" y="21" text-anchor="middle">you-read-i-read</text>
+
+  <!-- Conversation -->
+  <g transform="translate(24, 60)">
+    <!-- Pair 1 -->
+    <text class="line pair-1" y="14">
+      <tspan class="prompt-prefix">&gt;</tspan>
+      <tspan class="prompt-text" dx="6">add this https://arxiv.org/abs/2401.12345</tspan>
+    </text>
+    <text class="line pair-1" y="36">
+      <tspan class="resp-prefix">✓</tspan>
+      <tspan class="resp-text" dx="6">Filed: </tspan>
+      <tspan class="quote">"Foo: Tool-Augmented Agents via Retrieval"</tspan>
+      <tspan class="tags" dx="10">[tool-use, retrieval]</tspan>
+    </text>
+
+    <!-- Pair 2 -->
+    <text class="line pair-2" y="68">
+      <tspan class="prompt-prefix">&gt;</tspan>
+      <tspan class="prompt-text" dx="6">track Stanford NLP</tspan>
+    </text>
+    <text class="line pair-2" y="90">
+      <tspan class="resp-prefix">✓</tspan>
+      <tspan class="resp-text" dx="6">Resolved 3 author IDs on Semantic Scholar; watching.</tspan>
+    </text>
+
+    <!-- Pair 3 -->
+    <text class="line pair-3" y="122">
+      <tspan class="prompt-prefix">&gt;</tspan>
+      <tspan class="prompt-text" dx="6">any new papers since last week?</tspan>
+    </text>
+    <text class="line pair-3" y="144">
+      <tspan class="resp-prefix">✓</tspan>
+      <tspan class="resp-text" dx="6">12 candidates across 2 topics. Triaging…</tspan>
+    </text>
+
+    <!-- Pair 4 -->
+    <text class="line pair-4" y="176">
+      <tspan class="prompt-prefix">&gt;</tspan>
+      <tspan class="prompt-text" dx="6">I want to read about tool use</tspan>
+    </text>
+    <text class="line pair-4" y="198">
+      <tspan class="resp-prefix">✓</tspan>
+      <tspan class="resp-text" dx="6">3 matches. Top: </tspan>
+      <tspan class="quote">arxiv-2401.12345</tspan>
+      <tspan class="resp-text">. Open?</tspan>
+    </text>
+
+    <!-- Pair 5 -->
+    <text class="line pair-5" y="230">
+      <tspan class="prompt-prefix">&gt;</tspan>
+      <tspan class="prompt-text" dx="6">I finished the tool-use paper</tspan>
+    </text>
+    <text class="line pair-5" y="252">
+      <tspan class="resp-prefix">✓</tspan>
+      <tspan class="resp-text" dx="6">Marked read.</tspan>
+    </text>
+
+    <!-- Pair 6 -->
+    <text class="line pair-6" y="284">
+      <tspan class="prompt-prefix">&gt;</tspan>
+      <tspan class="prompt-text" dx="6">push my data</tspan>
+    </text>
+    <text class="line pair-6" y="306">
+      <tspan class="resp-prefix">✓</tspan>
+      <tspan class="resp-text" dx="6">Committed 4 changes; pushed.</tspan>
+    </text>
+
+    <!-- Blinking cursor at the next prompt position -->
+    <text class="cursor" x="0" y="306" dx="0" dy="22">▎</text>
+  </g>
+</svg>
