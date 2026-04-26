@@ -78,14 +78,36 @@ It will **not** ask for an Apify token here. That's deferred until you opt into 
 
 ## Optional: Twitter / LinkedIn discovery (Apify)
 
-Off by default. To enable, say "enable twitter" or "enable linkedin" and provide an [Apify](https://apify.com) API token when asked. Apify ships a $5/month free tier:
+Off by default. Twitter and LinkedIn discovery route through the [Apify](https://apify.com) MCP server.
 
-- Twitter (`apidojo/tweet-scraper`, $0.40 / 1k tweets) costs roughly $0.60/month at default sweep rates, which fits the free tier.
-- LinkedIn (`curious_coder/linkedin-post-search`, $5 / 1k posts) costs roughly $7.50/month at default sweep rates, which overshoots. Tighten `tracking_sources.linkedin.max_per_sweep` or sweep less often.
+**To enable:**
 
-The plugin caps spend per source per month (default `$5`) and skips calls when the cap is approached.
+- Say "enable twitter" or "enable linkedin" in your Claude Code session.
+- Provide your Apify API token when asked. The first-run flow does not ask for it.
+- Both sources stay disabled until you opt in explicitly.
 
-**Without Apify**, Twitter degrades to public Nitter mirrors (free, very flaky); LinkedIn skips silently. arXiv, Semantic Scholar, and Hacker News cover the bulk of CS / ML signal regardless.
+**Cost (Apify ships a $5 / month free tier):**
+
+- **Twitter** (`apidojo/tweet-scraper`):
+  - $0.40 per 1 000 tweets.
+  - Roughly $0.60 / month at default sweep rates.
+  - Fits the free tier comfortably.
+- **LinkedIn** (`curious_coder/linkedin-post-search`):
+  - $5 per 1 000 posts.
+  - Roughly $7.50 / month at default sweep rates.
+  - Overshoots the free tier. Mitigations: tighten `tracking_sources.linkedin.max_per_sweep`, sweep less often, or skip LinkedIn entirely.
+
+**Spend cap:**
+
+- Default `max_apify_usd_per_month: 5` per source (in `~/.you-read-i-read/config.yaml`).
+- The plugin tracks running monthly spend in `tracking/apify-spend.yaml`.
+- Calls are skipped when the cap is approached, with a one-line notice.
+
+**Without Apify, the plugin still works:**
+
+- Twitter falls back to public Nitter mirrors (free, very flaky).
+- LinkedIn skips silently with a plain notice.
+- arXiv, Semantic Scholar, and Hacker News cover the bulk of CS / ML signal regardless and require nothing.
 
 ## How it's built
 
