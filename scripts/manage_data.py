@@ -151,6 +151,83 @@ def paper_set_summary(args):
     _emit({"id": args.id, "summary_path": str(path.relative_to(data_repo_path()))})
 
 
+# ---------- tracking path helpers ----------
+
+def _groups_path() -> Path:
+    return ensure_data_repo(create_dirs=True) / "tracking" / "groups.yaml"
+
+
+def _topics_path() -> Path:
+    return ensure_data_repo(create_dirs=True) / "tracking" / "topics.yaml"
+
+
+def _state_path() -> Path:
+    return ensure_data_repo(create_dirs=True) / "tracking" / "state.json"
+
+
+def _kv_list(items):
+    out = {}
+    for item in items or []:
+        if "=" not in item:
+            sys.stderr.write(f"Expected key=value, got {item!r}\n"); sys.exit(2)
+        k, v = item.split("=", 1)
+        out[k] = v
+    return out
+
+
+# ---------- group subcommands ----------
+
+def group_add(args):
+    groups = read_yaml(_groups_path(), default={"groups": []})
+    gid = args.id or slugify(args.display_name)
+    sources = [_kv_list(s.split(",")) for s in (args.source or [])]
+    new = {"id": gid, "display_name": args.display_name,
+           "sources": sources, "added_date": now_iso()}
+    groups["groups"] = [g for g in groups.get("groups", []) if g.get("id") != gid] + [new]
+    write_yaml(_groups_path(), groups)
+    _emit(new)
+
+
+def group_list(args):
+    _emit(read_yaml(_groups_path(), default={"groups": []}))
+
+
+# ---------- topic subcommands ----------
+
+def topic_add(args):
+    topics = read_yaml(_topics_path(), default={"topics": []})
+    tid = args.id or slugify(args.display_name)
+    queries = {}
+    for q in args.query or []:
+        kv = _kv_list(q.split(","))
+        if "source" in kv and "q" in kv:
+            queries[kv["source"]] = kv["q"]
+    new = {"id": tid, "display_name": args.display_name,
+           "queries": queries, "added_date": now_iso()}
+    topics["topics"] = [t for t in topics.get("topics", []) if t.get("id") != tid] + [new]
+    write_yaml(_topics_path(), topics)
+    _emit(new)
+
+
+def topic_list(args):
+    _emit(read_yaml(_topics_path(), default={"topics": []}))
+
+
+# ---------- state subcommands ----------
+
+def state_get_last_checked(args):
+    state = read_json(_state_path(), default={"groups": {}, "topics": {}})
+    bucket = state.get(args.kind, {})
+    _emit(bucket.get(args.id, {"last_checked": None}))
+
+
+def state_set_last_checked(args):
+    state = read_json(_state_path(), default={"groups": {}, "topics": {}})
+    state.setdefault(args.kind, {})[args.id] = {"last_checked": now_iso()}
+    write_json(_state_path(), state)
+    _emit(state[args.kind][args.id])
+
+
 # ---------- argparse ----------
 
 def main():
@@ -196,6 +273,28 @@ def main():
     ps = sub.add_parser("paper-set-summary")
     ps.add_argument("id")
     ps.set_defaults(func=paper_set_summary)
+
+    ga = sub.add_parser("group-add")
+    ga.add_argument("--id"); ga.add_argument("--display-name", required=True)
+    ga.add_argument("--source", action="append")
+    ga.set_defaults(func=group_add)
+    sub.add_parser("group-list").set_defaults(func=group_list)
+
+    ta = sub.add_parser("topic-add")
+    ta.add_argument("--id"); ta.add_argument("--display-name", required=True)
+    ta.add_argument("--query", action="append")
+    ta.set_defaults(func=topic_add)
+    sub.add_parser("topic-list").set_defaults(func=topic_list)
+
+    sg = sub.add_parser("state-get-last-checked")
+    sg.add_argument("--kind", required=True, choices=["groups", "topics"])
+    sg.add_argument("--id", required=True)
+    sg.set_defaults(func=state_get_last_checked)
+
+    ss = sub.add_parser("state-set-last-checked")
+    ss.add_argument("--kind", required=True, choices=["groups", "topics"])
+    ss.add_argument("--id", required=True)
+    ss.set_defaults(func=state_set_last_checked)
 
     args = p.parse_args()
     args.func(args)
