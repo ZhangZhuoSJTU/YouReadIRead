@@ -1,0 +1,34 @@
+# YouReadIRead — git ignores
+#
+# This repo holds the agentic logic for the YouReadIRead system. Anything
+# that's a development artifact (design docs, runtime caches, OS noise,
+# editor scratch) stays out of git. Personal data lives in a *separate*
+# private repo (see config.yaml > data_repo.path) and is not in this tree
+# at all.
+
+# --- development artifacts (kept on disk for the agent, not in git) ---
+docs/superpowers/
+
+# --- claude code runtime artifacts ---
+.claude/.todos/
+.claude/sessions/
+.claude/logs/
+
+# --- python caches ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- editor / OS noise ---
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# --- env / secrets (in case anyone ever introduces them) ---
+.env
+.env.local
+.env.*.local
