@@ -1,23 +1,39 @@
-# You Read, I Read
+<p align="center">
+  <img src="assets/logo.svg" alt="You Read, I Read" width="540">
+</p>
 
-A persistent agentic Claude Code plugin that helps you read and track research
-papers, blogs, and reports. You talk to it; it captures, tracks, learns your
-taste, and runs interactive reading sessions.
+> **Talk to a persistent agent. It captures papers, tracks groups and topics, learns your taste, and reads with you.**
 
-## Capabilities
+```
+You: add this https://arxiv.org/abs/2401.12345
+You: track Stanford NLP
+You: any new papers since last week?
+You: I want to read about tool use
+You: I finished the tool-use paper
+You: push my data
+```
 
-| Slash | What it does | Plain-English |
-| --- | --- | --- |
-| `/add <url>` | Fetch and deep-summarize a paper / blog / PDF; file in to-read. | "add this paper https://…" |
-| `/track-group <name or url>` | Watch a research group's publications over time. | "track Stanford NLP" |
-| `/track-topic <topic>` | Watch a topic across arXiv, Semantic Scholar, HN, optionally Twitter/LinkedIn. | "follow papers on LLM agents" |
-| `/update` | Sweep tracked sources for new candidates and triage them with you per-card. | "any new papers since last week?" |
-| `/read [<id> \| <keywords>]` | Interactive reading session. Search by keyword or pick by id. | "let's read something" / "I want to read about tool use" |
-| `/todo [<keywords>]` | List the to-read queue, ranked. | "what's on my to-read list?" |
-| `/list [filters]` | Browse all papers (status / tag / author / since / query). | "show me everything I read this month" |
-| `/done [<id> \| <keywords>]` | Mark a paper read (when finished outside a session). | "I finished reading the tool-use paper" |
-| `/archive [<id> \| <keywords>]` | Mark a paper archived (decision: not going to read). | "skip this one, I'm not going to read it" |
-| `/sync` | Commit and push the private data repo (with confirmation). | "push my data" |
+A Claude Code plugin. Install once, talk to it forever.
+
+---
+
+## What you can ask it
+
+| You say | It does |
+| --- | --- |
+| "add this paper `<url>`" / `/add <url>` | Fetches, writes a 7-section structured summary, files it in your to-read list. |
+| "track Stanford NLP" / `/track-group <name>` | Watches a group's publications over time. |
+| "follow papers on LLM agents" / `/track-topic <topic>` | Watches a topic across arXiv + Semantic Scholar + HN (+ optional Twitter / LinkedIn). |
+| "any new papers since last week?" / `/update` | Sweeps every tracked source, ranks, and triages with you per-card. |
+| "let's read something" / `/read` | Recommends from the top of your queue, runs an interactive session. |
+| "I want to read about tool use" / `/read tool use` | Searches your queue by keyword and picks a paper. |
+| "what's on my to-read list?" / `/todo` | Shows the queue, ranked. |
+| "show me everything I read this month" / `/list --status read --since …` | Browses any subset. |
+| "I finished reading X" / `/done` | Marks read, logs the signal. |
+| "skip this one" / `/archive` | Archives without reading. |
+| "push my data" / `/sync` | Commits and pushes your private data repo. |
+
+The agent learns from every accept / reject / read so the queue gradually self-curates. You stay in control — it never auto-adds in default mode, and it never marks a paper read without your explicit yes.
 
 ## Install
 
@@ -27,57 +43,46 @@ taste, and runs interactive reading sessions.
 /reload-plugins
 ```
 
-The repo is a **self-marketplace** (`.claude-plugin/marketplace.json` points at the repo root), so the two-step install above works directly from GitHub.
-
-For local development:
-
-```
-/plugin marketplace add ~/Code/YouReadIRead   # local file path
-/plugin install you-read-i-read
-/reload-plugins
-```
+The repo is a self-marketplace (`.claude-plugin/marketplace.json` at the root), so the two-step install works directly from GitHub. Local-dev variant: `marketplace add ~/Code/YouReadIRead`.
 
 ## First run
 
-After install, in any Claude Code session, say `/sync init` (or "set up You Read, I Read"). The agent will:
+In any Claude Code session, say `/sync init` (or "set up You Read, I Read"). The agent will:
 
 1. Copy `defaults/config.yaml` → `~/.you-read-i-read/config.yaml`.
-2. Ask for a **data-repo remote URL** (e.g. `git@github.com:ZhangZhuoSJTU/you-read-i-read-data.git`). This is a *separate, private* git repo for your personal state (papers, summaries, preferences). It's never bundled into this plugin.
-3. Optionally `gh repo create --private` if the remote doesn't yet exist.
-4. Scaffold the data dir.
+2. Ask for a **data-repo remote URL** — a separate private git repo for your personal state (papers, summaries, preferences). Plugin tree never holds any of it.
+3. Optionally `gh repo create --private` if the remote doesn't exist yet.
+4. Scaffold the data dir (with its own `.gitignore` so auth caches stay local).
 
-It will **not** ask for an Apify token here — that's deferred until you actually want Twitter/LinkedIn discovery.
+It will **not** ask for an Apify token here — that's deferred until you opt into Twitter or LinkedIn.
 
-## Optional: Twitter and LinkedIn discovery (Apify)
+## Optional: Twitter / LinkedIn discovery (Apify)
 
-These social sources are off by default. To enable, say "enable twitter" (or `/list-sources`, `/track-source twitter`, etc.) and provide an Apify API token when prompted.
+Off by default. To enable, say "enable twitter" / "enable linkedin" and provide an [Apify](https://apify.com) API token when asked. Apify ships a $5/month free tier:
 
-Apify offers a **free tier of $5/month** in usage credits. At default sweep rates:
+- Twitter (`apidojo/tweet-scraper`, $0.40 / 1k tweets) → ~$0.60/month — fits free tier.
+- LinkedIn (`curious_coder/linkedin-post-search`, $5 / 1k posts) → ~$7.50/month — overshoots; tighten `tracking_sources.linkedin.max_per_sweep` or sweep less often.
 
-- Twitter (apidojo/tweet-scraper, $0.40 / 1k tweets) → ~$0.60/month — fits free tier.
-- LinkedIn (curious_coder/linkedin-post-search, $5 / 1k posts) → ~$7.50/month — overshoots; tighten via `tracking_sources.linkedin.max_per_sweep` or sweep less often.
+The plugin caps spend per source per month (default `$5`) and skips calls when approached.
 
-The plugin **caps spend per source per month** (default `$5`); calls are skipped when the cap is approached.
+**Without Apify**, Twitter degrades to public Nitter mirrors (free, very flaky); LinkedIn skips silently. arXiv + Semantic Scholar + Hacker News cover the bulk of CS / ML signal regardless.
 
-## Without Apify
+## How it's built
 
-Twitter falls back to public Nitter mirrors (free, very flaky). LinkedIn requires Apify or a logged-in browser-skill session — without those, it's skipped silently with a one-line note. **arXiv, Semantic Scholar, and Hacker News work fully zero-cost regardless** and cover the bulk of CS / ML signal.
+| Component | What it owns |
+| --- | --- |
+| `skills/paper-curate` | `/add`, `/track-group`, `/track-topic`, `/update` (ingest + sweep). |
+| `skills/paper-read` | `/read` (interactive session, end-of-session prompt before any read flip). |
+| `skills/paper-data` | `/todo`, `/list`, `/done`, `/archive`, `/sync`, first-run setup. |
+| `agents/paper-summarizer` | Parallel summarization fanout. |
+| `scripts/_common.py` | Config + paper IDs + atomic file ops. |
+| `scripts/manage_data.py` | Single writer to the data repo (12 subcommands, 17 unit tests). |
+| `scripts/apify-mcp-launch.sh` | Spawns the Apify MCP server when `APIFY_TOKEN` is set; no-op otherwise. |
 
-## Architecture (quick)
+Personal state lives in a separate private git repo at `~/.you-read-i-read/data/`. The plugin tree contains zero personal data.
 
-- **3 skills**: `paper-curate` (ingest + sweep), `paper-read` (interactive reading), `paper-data` (list + edit + sync + first-run).
-- **1 subagent**: `paper-summarizer` (parallel summarization).
-- **2 Python helpers**: `scripts/_common.py` (config + IDs + atomic file ops), `scripts/manage_data.py` (single writer to the data repo).
-- **MCP server**: Apify (auto-spawned via `scripts/apify-mcp-launch.sh`; idle when no token, real otherwise).
-
-User personal state lives in a **separate private git repo** at `~/.you-read-i-read/data/`. The plugin tree (this repo) contains zero personal data.
-
-See `docs/data-schema.md` for the data-repo layout and `CLAUDE.md` for the agent's operating invariants.
+For the data layout: `docs/data-schema.md`. For the agent's operating invariants: `CLAUDE.md`.
 
 ## License
 
-MIT. See `LICENSE`.
-
-## Repo
-
-`https://github.com/ZhangZhuoSJTU/YouReadIRead` (placeholder if not yet pushed).
+MIT — see `LICENSE`.

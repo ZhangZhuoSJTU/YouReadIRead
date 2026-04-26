@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="You Read, I Read icon">
+  <!--
+    Square icon variant of the You Read, I Read logo. Same two-cards motif,
+    centered for use as a social-card / favicon source. Light theme.
+  -->
+  <title>You Read, I Read</title>
+
+  <g transform="translate(22, 22)">
+    <!-- Back card (the agent) -->
+    <rect x="40" y="36" width="116" height="124" rx="8"
+          fill="#FFFFFF" stroke="#1A2332" stroke-width="3"/>
+    <line x1="58" y1="62"  x2="138" y2="62"  stroke="#D5D8DD" stroke-width="3" stroke-linecap="round"/>
+    <line x1="58" y1="78"  x2="124" y2="78"  stroke="#D5D8DD" stroke-width="3" stroke-linecap="round"/>
+    <line x1="58" y1="94"  x2="138" y2="94"  stroke="#D5D8DD" stroke-width="3" stroke-linecap="round"/>
+    <line x1="58" y1="110" x2="116" y2="110" stroke="#D5D8DD" stroke-width="3" stroke-linecap="round"/>
+    <rect x="132" y="138" width="14" height="14" rx="2" fill="#4A6B9D"/>
+
+    <!-- Front card (the user) -->
+    <rect x="0" y="0" width="116" height="124" rx="8"
+          fill="#FFFFFF" stroke="#1A2332" stroke-width="3"/>
+    <line x1="18" y1="26"  x2="98"  y2="26"  stroke="#D5D8DD" stroke-width="3" stroke-linecap="round"/>
+    <line x1="18" y1="42"  x2="84"  y2="42"  stroke="#D5D8DD" stroke-width="3" stroke-linecap="round"/>
+    <line x1="18" y1="58"  x2="98"  y2="58"  stroke="#D5D8DD" stroke-width="3" stroke-linecap="round"/>
+    <line x1="18" y1="74"  x2="76"  y2="74"  stroke="#D5D8DD" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="100" cy="103" r="7" fill="#C97863"/>
+
+    <line x1="105" y1="108" x2="135" y2="138"
+          stroke="#1A2332" stroke-width="1.5" stroke-linecap="round"
+          stroke-dasharray="2 4" opacity="0.55"/>
+  </g>
+</svg>
