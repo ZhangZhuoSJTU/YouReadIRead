@@ -2,18 +2,29 @@
   <img src="assets/logo.svg" alt="You Read, I Read" width="540">
 </p>
 
-> **Talk to a persistent agent. It captures papers, tracks groups and topics, learns your taste, and reads with you.**
+**You Read, I Read** is a Claude Code plugin. You talk; it captures papers, tracks groups and topics, learns your taste, and reads with you.
 
-```
-You: add this https://arxiv.org/abs/2401.12345
-You: track Stanford NLP
-You: any new papers since last week?
-You: I want to read about tool use
-You: I finished the tool-use paper
-You: push my data
+```text
+> add this https://arxiv.org/abs/2401.12345
+✓ Filed: "Foo: Tool-Augmented Agents via Retrieval"  [tool-use, retrieval]
+
+> track Stanford NLP
+✓ Resolved 3 author IDs on Semantic Scholar; watching.
+
+> any new papers since last week?
+✓ 12 candidates across 2 topics. Triaging...
+
+> I want to read about tool use
+✓ 3 matches. Top: arxiv-2401.12345. Open?
+
+> I finished the tool-use paper
+✓ Marked read.
+
+> push my data
+✓ Committed 4 changes; pushed.
 ```
 
-A Claude Code plugin. Install once, talk to it forever.
+Install once, talk to it forever.
 
 ---
 
@@ -33,7 +44,7 @@ A Claude Code plugin. Install once, talk to it forever.
 | "skip this one" / `/archive` | Archives without reading. |
 | "push my data" / `/sync` | Commits and pushes your private data repo. |
 
-The agent learns from every accept / reject / read so the queue gradually self-curates. You stay in control — it never auto-adds in default mode, and it never marks a paper read without your explicit yes.
+The agent learns from every accept, reject, and read, so the queue gradually self-curates. You stay in control: it never auto-adds in default mode, and it never marks a paper read without your explicit yes.
 
 ## Install
 
@@ -49,23 +60,23 @@ The repo is a self-marketplace (`.claude-plugin/marketplace.json` at the root), 
 
 In any Claude Code session, say `/sync init` (or "set up You Read, I Read"). The agent will:
 
-1. Copy `defaults/config.yaml` → `~/.you-read-i-read/config.yaml`.
-2. Ask for a **data-repo remote URL** — a separate private git repo for your personal state (papers, summaries, preferences). Plugin tree never holds any of it.
+1. Copy `defaults/config.yaml` to `~/.you-read-i-read/config.yaml`.
+2. Ask for a **data-repo remote URL**. This is a separate private git repo for your personal state (papers, summaries, preferences). The plugin tree never holds any of it.
 3. Optionally `gh repo create --private` if the remote doesn't exist yet.
 4. Scaffold the data dir (with its own `.gitignore` so auth caches stay local).
 
-It will **not** ask for an Apify token here — that's deferred until you opt into Twitter or LinkedIn.
+It will **not** ask for an Apify token here. That's deferred until you opt into Twitter or LinkedIn.
 
 ## Optional: Twitter / LinkedIn discovery (Apify)
 
-Off by default. To enable, say "enable twitter" / "enable linkedin" and provide an [Apify](https://apify.com) API token when asked. Apify ships a $5/month free tier:
+Off by default. To enable, say "enable twitter" or "enable linkedin" and provide an [Apify](https://apify.com) API token when asked. Apify ships a $5/month free tier:
 
-- Twitter (`apidojo/tweet-scraper`, $0.40 / 1k tweets) → ~$0.60/month — fits free tier.
-- LinkedIn (`curious_coder/linkedin-post-search`, $5 / 1k posts) → ~$7.50/month — overshoots; tighten `tracking_sources.linkedin.max_per_sweep` or sweep less often.
+- Twitter (`apidojo/tweet-scraper`, $0.40 / 1k tweets) costs roughly $0.60/month at default sweep rates, which fits the free tier.
+- LinkedIn (`curious_coder/linkedin-post-search`, $5 / 1k posts) costs roughly $7.50/month at default sweep rates, which overshoots. Tighten `tracking_sources.linkedin.max_per_sweep` or sweep less often.
 
-The plugin caps spend per source per month (default `$5`) and skips calls when approached.
+The plugin caps spend per source per month (default `$5`) and skips calls when the cap is approached.
 
-**Without Apify**, Twitter degrades to public Nitter mirrors (free, very flaky); LinkedIn skips silently. arXiv + Semantic Scholar + Hacker News cover the bulk of CS / ML signal regardless.
+**Without Apify**, Twitter degrades to public Nitter mirrors (free, very flaky); LinkedIn skips silently. arXiv, Semantic Scholar, and Hacker News cover the bulk of CS / ML signal regardless.
 
 ## How it's built
 
@@ -81,8 +92,8 @@ The plugin caps spend per source per month (default `$5`) and skips calls when a
 
 Personal state lives in a separate private git repo at `~/.you-read-i-read/data/`. The plugin tree contains zero personal data.
 
-For the data layout: `docs/data-schema.md`. For the agent's operating invariants: `CLAUDE.md`.
+For the data layout, see `docs/data-schema.md`. For the agent's operating invariants, see `CLAUDE.md`.
 
 ## License
 
-MIT — see `LICENSE`.
+MIT. See `LICENSE`.
