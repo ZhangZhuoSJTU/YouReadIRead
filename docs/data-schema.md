@@ -34,6 +34,9 @@ When `papers/index.json` is absent, the first-run flow (in the `paper-data` skil
 | `preferences/taxonomy.yaml` | `{labels: []}` |
 | `preferences/signals.jsonl` | empty file |
 | `preferences/preference-state.yaml` | zeroed totals, `recommended_mode: interactive` |
+| `.gitignore` | copied from the plugin's `defaults/data-repo-gitignore` |
+
+The data repo's `.gitignore` excludes `tracking/sessions/` (auth state — Apify queryId fingerprints, optional logged-in cookies) plus standard Python / OS / editor noise. **`tracking/sessions/` must never enter git** even though the data repo is private; auth caches are sensitive end-to-end.
 
 ---
 

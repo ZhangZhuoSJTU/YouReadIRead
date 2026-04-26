@@ -1,0 +1,13 @@
+# Auth & session caches — must not enter git, even in a private repo.
+# Contains Apify queryId fingerprints, optional Twitter/LinkedIn cookies, etc.
+tracking/sessions/
+
+# Python caches (defensive — only matters if local scripts ever run here)
+__pycache__/
+*.pyc
+
+# OS / editor noise
+.DS_Store
+*.swp
+*.swo
+*~

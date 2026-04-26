@@ -43,7 +43,11 @@ runs and user state is missing.
    `tracking/topics.yaml: {topics: []}`,
    `tracking/state.json: {groups: {}, topics: {}}`,
    `preferences/signals.jsonl: ""`, `preferences/taxonomy.yaml: ""`.
-6. **Commit and offer initial push.** `git -C ~/.you-read-i-read/data init`
+6. **Write `.gitignore`** by copying the plugin's
+   `defaults/data-repo-gitignore` to `~/.you-read-i-read/data/.gitignore`.
+   This excludes `tracking/sessions/` (auth state) and the usual Python /
+   OS noise.
+7. **Commit and offer initial push.** `git -C ~/.you-read-i-read/data init`
    if needed; first commit; ask before pushing.
 
 ## Listing playbook
