@@ -31,6 +31,21 @@
 
 <p align="center"><i>Install once, talk to it forever.</i></p>
 
+## Highlights
+
+<table>
+  <tr>
+    <td width="33%" valign="top"><b>Talk in plain English</b><br>Slash commands are sugar. Natural-language phrasings drive every action.</td>
+    <td width="33%" valign="top"><b>Your data, your repo</b><br>Personal state lives in a separate private git repo you control. Plugin tree holds none of it.</td>
+    <td width="33%" valign="top"><b>Learns your taste</b><br>Every accept, reject, and finish refines ranking. The queue self-curates over time.</td>
+  </tr>
+  <tr>
+    <td valign="top"><b>Multi-source coverage</b><br>arXiv, Semantic Scholar, and Hacker News by default. Twitter and LinkedIn are opt-in via Apify.</td>
+    <td valign="top"><b>Free to start</b><br>Works fully without any token. With Apify, monthly spend is capped per source.</td>
+    <td valign="top"><b>Read together</b><br>Interactive sessions grounded in raw paper text, with an explicit end-of-session prompt.</td>
+  </tr>
+</table>
+
 ## What you can ask it
 
 <table>
