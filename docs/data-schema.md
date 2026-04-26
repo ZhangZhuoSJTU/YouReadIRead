@@ -392,7 +392,7 @@ A small derived cache updated atomically on every signal-log call. Its sole purp
 
 **This file does not contain `tags`, `recent_positives`, or `recent_negatives`.** Those were dropped in the LLM-prompt-driven preference design: the agent reads the tail of `signals.jsonl` into the ranking prompt directly, so no tag-buckets or recent-rings are needed.
 
-Fields: `totals` (dict with `signals`, `accepted`, `rejected`, `read_finished`, `archived_without_reading` counts), `recommended_mode` (`interactive` < 25 signals / `semi-auto` 25–99 / `full-auto` ≥ 100), `last_recomputed` (ISO-8601 UTC).
+Fields: `totals` (dict with `signals`, `accepted`, `rejected`, `read_finished`, `archived_without_reading` counts), `recommended_mode` (`interactive` if `accepted + rejected < 25`; `semi-auto` if `25 ≤ accepted + rejected < 100`; `full-auto` if `accepted + rejected ≥ 100`), `last_recomputed` (ISO-8601 UTC).
 
 ### Example
 

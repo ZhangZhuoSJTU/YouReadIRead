@@ -98,7 +98,7 @@ relevance = w_p · accept_likelihood + w_r · recency + w_t · trending
 ```
 Default weights: `(0.5, 0.2, 0.3)` from `config.preferences.ranking_weights`.
 
-The **digested** `preferences/preference-state.yaml` is read only for deterministic threshold decisions — e.g. "suggest semi-auto mode?" (yes when `totals.signals ≥ 25`). The agent never edits this file directly; `manage_data.py signal-log` recomputes it atomically on every signal write.
+The **digested** `preferences/preference-state.yaml` is read only for deterministic threshold decisions — e.g. "suggest semi-auto mode?" (yes when `totals.accepted + totals.rejected >= 25`; full-auto at `>= 100`). The agent never edits this file directly; `manage_data.py signal-log` recomputes it atomically on every signal write.
 
 ## 10. First-run detection
 
@@ -107,8 +107,10 @@ When any data-touching command runs and `~/.you-read-i-read/config.yaml` is miss
 1. Copy `defaults/config.yaml` → `~/.you-read-i-read/config.yaml` if absent.
 2. Prompt for the data-repo remote URL (e.g. `git@github.com:ZhangZhuoSJTU/you-read-i-read-data.git`). Validate basic shape. Write to `data_repo.remote`.
 3. Offer `gh repo create --private` if the remote doesn't yet exist.
-4. Scaffold the data dir (`papers/`, `tracking/`, `preferences/` subdirs and seed files).
-5. Do not ask for an Apify token at first run. Ask only when the user later enables Twitter or LinkedIn.
+4. Scaffold the data dir: `papers/index.json: {}`, `tracking/groups.yaml: {groups: []}`, `tracking/topics.yaml: {topics: []}`, `tracking/state.json: {groups: {}, topics: {}}`, empty `preferences/signals.jsonl`, `preferences/taxonomy.yaml`.
+5. Copy the plugin's `defaults/data-repo-gitignore` to `~/.you-read-i-read/data/.gitignore` so `tracking/sessions/` (auth state) never enters git.
+6. `git init` the data repo if needed; make the seed commit; ask before pushing.
+7. Do not ask for an Apify token at first run. Ask only when the user later enables Twitter or LinkedIn.
 
 ## 11. When you don't know what to do
 

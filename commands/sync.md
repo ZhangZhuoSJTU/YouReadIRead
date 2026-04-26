@@ -7,9 +7,13 @@ The user wants to: $ARGUMENTS
 
 Use the `paper-data` skill.
 
-- **`/sync init`**: run first-run setup. Copy `defaults/config.yaml` →
+- **`/sync init`**: run the full first-run setup per `paper-data`'s
+  documented flow. Copy `defaults/config.yaml` →
   `~/.you-read-i-read/config.yaml`, prompt for `data_repo.remote`, scaffold
-  data dirs, optionally `gh repo create --private` if `gh` is on PATH.
+  data dirs (papers, tracking, preferences with seed files), copy
+  `defaults/data-repo-gitignore` to the data repo so `tracking/sessions/`
+  stays out of git, optionally `gh repo create --private` if `gh` is on
+  PATH, then `git init` + seed commit.
 
 - **`/sync status`**: show adapter health (last successful tier per source)
   and Apify month-to-date spend (read `tracking/apify-spend.yaml`).

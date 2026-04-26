@@ -65,7 +65,13 @@ Log on `a`/`s`. `?` fetches context, no persist. `r` → `/add` then `/read`. Ad
 
 ## Subagent dispatch
 
-When `/update` finds ≥ 5 candidates lacking one-liners, fan out to **paper-summarizer** (cap 8 parallel), URL + raw text. Use one-liner only; no deep summaries in sweeps.
+The **paper-summarizer** subagent always produces a deep 7-section summary AND persists raw content. Dispatch only when that's the desired output:
+
+- **`/add`**: dispatch one summarizer per URL.
+- **`/update` `[r]ead-now`**: dispatch one summarizer for the chosen candidate, then drop into `/read`.
+- **`/update` sweeps themselves**: do NOT dispatch the summarizer for one-liners. Source adapters return abstracts; derive the per-card one-liner in-context from the abstract. The `/update` sweep is two-tier-quick by definition.
+
+When dispatching for parallel `/add` (rare in v1), cap at 8 concurrent.
 
 ## Common mistakes
 

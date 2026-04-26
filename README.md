@@ -35,14 +35,14 @@
 
 <table>
   <tr>
-    <td width="33%" valign="top"><b>Talk in plain English</b><br>Slash commands are sugar. Natural-language phrasings drive every action.</td>
-    <td width="33%" valign="top"><b>Your data, your repo</b><br>Personal state lives in a separate private git repo you control. Plugin tree holds none of it.</td>
-    <td width="33%" valign="top"><b>Learns your taste</b><br>Every accept, reject, and finish refines ranking. The queue self-curates over time.</td>
+    <td width="33%" valign="top"><b>1. Capture from any URL</b><br>arXiv, blog post, PDF, Semantic Scholar, DOI: paste a link and the agent fetches, writes a 7-section structured summary, and files it in your to-read list.</td>
+    <td width="33%" valign="top"><b>2. Track groups and topics</b><br>Watch a research group's publications or a topic across arXiv, Semantic Scholar, and Hacker News (plus optional Twitter / LinkedIn via Apify).</td>
+    <td width="33%" valign="top"><b>3. Discover + triage</b><br>Periodic sweeps surface new candidates. You decide per-card: add, skip, read now, or archive. Every decision is a signal.</td>
   </tr>
   <tr>
-    <td valign="top"><b>Multi-source coverage</b><br>arXiv, Semantic Scholar, and Hacker News by default. Twitter and LinkedIn are opt-in via Apify.</td>
-    <td valign="top"><b>Free to start</b><br>Works fully without any token. With Apify, monthly spend is capped per source.</td>
-    <td valign="top"><b>Read together</b><br>Interactive sessions grounded in raw paper text, with an explicit end-of-session prompt.</td>
+    <td valign="top"><b>4. Ranking that learns your taste</b><br>Accept, reject, finish, and archive shape an in-context preference model. The queue self-curates gradually, without any manual labeling.</td>
+    <td valign="top"><b>5. Read together</b><br>Interactive reading sessions walk you through the structured summary, then drill into the raw paper text on demand with section / page references.</td>
+    <td valign="top"><b>6. Your state, your repo</b><br>Papers, summaries, and signals live in a separate private git repo you control. The plugin tree holds none of it.</td>
   </tr>
 </table>
 
@@ -180,7 +180,7 @@ Off by default. Twitter and LinkedIn discovery route through the [Apify](https:/
     <td><b>Helpers</b></td>
     <td>
       <code>scripts/_common.py</code> (config + paper IDs + atomic file ops) ·
-      <code>scripts/manage_data.py</code> (single writer, 12 subcommands, 17 unit tests)
+      <code>scripts/manage_data.py</code> (single writer, 13 subcommands, 20 unit tests)
     </td>
   </tr>
   <tr>
