@@ -32,3 +32,8 @@ __pycache__/
 .env
 .env.local
 .env.*.local
+
+# --- python test artifacts ---
+.pytest_cache/
+.coverage
+htmlcov/

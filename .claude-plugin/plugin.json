@@ -1,0 +1,16 @@
+{
+  "name": "you-read-i-read",
+  "displayName": "You Read, I Read",
+  "version": "0.1.0",
+  "description": "Persistent agent for reading and tracking research papers, blogs, and reports. Captures URLs, tracks groups and topics across arXiv/Semantic Scholar/HN/Twitter/LinkedIn, learns your taste, and runs interactive reading sessions.",
+  "author": { "name": "Zhuo Zhang" },
+  "repository": "https://github.com/ZhangZhuoSJTU/YouReadIRead",
+  "license": "MIT",
+  "agents": ["./agents/paper-summarizer.md"],
+  "mcpServers": {
+    "apify": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/scripts/apify-mcp-launch.sh",
+      "env": { "APIFY_TOKEN": "${env:APIFY_TOKEN}" }
+    }
+  }
+}
