@@ -1,0 +1,12 @@
+{
+  "name": "you-read-i-read",
+  "owner": { "name": "Zhuo Zhang" },
+  "plugins": [
+    {
+      "name": "you-read-i-read",
+      "description": "Persistent agent for reading and tracking research papers, blogs, and reports.",
+      "version": "0.1.0",
+      "source": "."
+    }
+  ]
+}
